@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"strconv"
 )
@@ -21,7 +22,14 @@ func NewFizzBuzz(numb int) *FizzBuzz { //создание новой физба�
 	}
 }
 
-func CalcFizzBuzz(f *FizzBuzz, numb int) *FizzBuzz { //функция формирования последовательности
+// CalcFizzBuzz возвращает новую структуру FizzBuzz и ошибку
+func CalcFizzBuzz(f *FizzBuzz, numb int) (FizzBuzz, error) { //функция формирования последовательности
+	if numb <= 0 {
+		return *f, errors.New("число не является положительным")
+	}
+	fResult := FizzBuzz{
+		ResultSlice: make([]Result, 0, numb),
+	}
 	for i := 1; i < numb+1; i++ {
 		var result Result
 		switch {
@@ -33,11 +41,10 @@ func CalcFizzBuzz(f *FizzBuzz, numb int) *FizzBuzz { //функция форми
 			result = Result{Number: i, Output: "Buzz", Type: "buzz"}
 		default:
 			result = Result{Number: i, Output: strconv.Itoa(i), Type: "number"}
-
 		}
-		f.ResultSlice = append(f.ResultSlice, result)
+		fResult.ResultSlice = append(fResult.ResultSlice, result)
 	}
-	return f
+	return fResult, nil
 }
 
 func PrintFizzBuzz(f *FizzBuzz) { //функция печати
