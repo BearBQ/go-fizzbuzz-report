@@ -1,9 +1,11 @@
 package main
 
+import "go-fizzbuzz-report/fizzbuzz"
+
 func main() {
 	var numb int = 44
-	newFizz := NewFizzBuzz(numb)
-	CalcFizzBuzz(newFizz, numb)
-	PrintFizzBuzz(newFizz)
-	PrintFizzBuzzNumb((newFizz))
+	newFizz := fizzbuzz.NewFizzBuzz(numb)
+	fizzbuzz.CalcFizzBuzz(newFizz, numb)
+	fizzbuzz.PrintFizzBuzz(newFizz)
+	fizzbuzz.PrintFizzBuzzNumb((newFizz))
 }
