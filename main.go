@@ -1,11 +1,20 @@
 package main
 
-import "go-fizzbuzz-report/fizzbuzz"
+import (
+	"fmt"
+	"go-fizzbuzz-report/fizzbuzz"
+	"go-fizzbuzz-report/input"
+)
 
 func main() {
-	var numb int = 44
-	newFizz := fizzbuzz.NewFizzBuzz(numb)
-	fizzbuzz.CalcFizzBuzz(newFizz, numb)
-	fizzbuzz.PrintFizzBuzz(newFizz)
-	fizzbuzz.PrintFizzBuzzNumb((newFizz))
+	number := input.InputNumber()
+	newFizz := fizzbuzz.NewFizzBuzz(number)
+	resultFizzBuzz, err := fizzbuzz.CalcFizzBuzz(newFizz, number)
+	if err != nil {
+		fmt.Println("Ошибка создания FizzBuzz:", err)
+		return
+	}
+
+	fizzbuzz.PrintFizzBuzz(&resultFizzBuzz)
+	fizzbuzz.PrintFizzBuzzNumb((&resultFizzBuzz))
 }
