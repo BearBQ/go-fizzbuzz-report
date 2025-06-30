@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"go-fizzbuzz-report/input"
 	"go-fizzbuzz-report/output"
-	"os"
 	"strconv"
 )
 
@@ -96,38 +95,39 @@ func GetPrintNames(f FizzBuzz) ([][3]string, error) {
 func RunFizzBuzz() error {
 	number, err := input.InputNumber()
 	if err != nil {
-		fmt.Println(err)
-		RunFizzBuzz()
+		return err
 	}
 
 	//Создадим пустой срез заданной capacity
 	fizBuzzEmpty, err := NewFizzBuzz(number)
 	if err != nil {
-		fmt.Println(err)
-		RunFizzBuzz()
+		return err
 	}
 	fizBuzzFinal, err := GenerateFizzBuzz(&fizBuzzEmpty, number) //создаем последовательность
 	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		return err
 	}
 
 	var typeCounts [4]int //считаем типы
 	typeCounts, err = countFizzBuzz(fizBuzzFinal)
 	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		return err
 	}
 
 	var printValue [][3]string
 	printValue, err = GetPrintNames(fizBuzzFinal)
 	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		return err
 	}
 
 	err = output.PrintFizzBuzz(printValue)
+	if err != nil {
+		return err
+	}
 
 	err = output.PrintFizzBuzzNumb(typeCounts)
-
+	if err != nil {
+		return err
+	}
+	return nil
 }
