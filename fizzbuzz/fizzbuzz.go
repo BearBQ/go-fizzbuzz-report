@@ -1,75 +1,133 @@
 package fizzbuzz
 
 import (
-	"errors"
 	"fmt"
+	"go-fizzbuzz-report/input"
+	"go-fizzbuzz-report/output"
+	"os"
 	"strconv"
 )
 
-type Result struct {
-	Number int    // само число, например 3
-	Output string // что вывести: "Fizz", "Buzz", "FizzBuzz" или "3"
+// Result Структура
+type FizzBuzzItem struct {
+	Number int    // само число
+	Output string // что вывести: "Fizz", "Buzz", "FizzBuzz" или чисор
 	Type   string // метка типа: "fizz", "buzz", "fizzbuzz", "number"
 }
 
-type FizzBuzz struct { //объявлю новую структуру, которая будет представлять из себя массив структур
-	ResultSlice []Result
+// FizzBuzz массив структур
+type FizzBuzz struct {
+	FizzBuzzResultSlice []FizzBuzzItem
 }
 
-func NewFizzBuzz(numb int) *FizzBuzz { //создание новой физбаз предоставим функции, с заданной cap у слайса
-	return &FizzBuzz{
-		ResultSlice: make([]Result, 0, numb),
-	}
-}
-
-// CalcFizzBuzz возвращает новую структуру FizzBuzz и ошибку
-func CalcFizzBuzz(f *FizzBuzz, numb int) (FizzBuzz, error) { //функция формирования последовательности
+// NewFizzBuzz создание новой физбаз заданной емкости
+func NewFizzBuzz(numb int) (FizzBuzz, error) {
 	if numb <= 0 {
-		return *f, errors.New("число не является положительным")
+		return FizzBuzz{}, fmt.Errorf("число не может быть отрицательным либо равным нулю")
 	}
+	return FizzBuzz{
+		FizzBuzzResultSlice: make([]FizzBuzzItem, 0, numb),
+	}, nil
+}
+
+// GenerateFizzBuzz возвращает новую структуру FizzBuzz и ошибку
+func GenerateFizzBuzz(f *FizzBuzz, number int) (FizzBuzz, error) { //функция формирования последовательности
+
 	fResult := FizzBuzz{
-		ResultSlice: make([]Result, 0, numb),
+		FizzBuzzResultSlice: make([]FizzBuzzItem, 0, number),
 	}
-	for i := 1; i < numb+1; i++ {
-		var result Result
+	for i := 1; i < number+1; i++ {
+		var result FizzBuzzItem
 		switch {
 		case i%15 == 0:
-			result = Result{Number: i, Output: "FizzBuzz", Type: "fizzbuzz"}
+			result = FizzBuzzItem{Number: i, Output: "FizzBuzz", Type: "fizzbuzz"}
 		case i%3 == 0:
-			result = Result{Number: i, Output: "Fizz", Type: "fizz"}
+			result = FizzBuzzItem{Number: i, Output: "Fizz", Type: "fizz"}
 		case i%5 == 0:
-			result = Result{Number: i, Output: "Buzz", Type: "buzz"}
+			result = FizzBuzzItem{Number: i, Output: "Buzz", Type: "buzz"}
 		default:
-			result = Result{Number: i, Output: strconv.Itoa(i), Type: "number"}
+			result = FizzBuzzItem{Number: i, Output: strconv.Itoa(i), Type: "number"}
 		}
-		fResult.ResultSlice = append(fResult.ResultSlice, result)
+		fResult.FizzBuzzResultSlice = append(fResult.FizzBuzzResultSlice, result)
 	}
 	return fResult, nil
 }
 
-func PrintFizzBuzz(f *FizzBuzz) { //функция печати
-	if len(f.ResultSlice) != 0 {
-		for _, value := range f.ResultSlice {
-			fmt.Printf("number:%v, output:%s, type: %s\n", value.Number, value.Output, value.Type)
+// FizzBuzz подсчитывает количество элементов каждого типа
+func countFizzBuzz(f FizzBuzz) ([4]int, error) {
+	var result [4]int
+
+	if len(f.FizzBuzzResultSlice) == 0 {
+		return result, fmt.Errorf("на вход поступил пустой слайс")
+	}
+	for _, value := range f.FizzBuzzResultSlice {
+		switch {
+		case value.Type == "fizzbuzz":
+			result[0]++
+		case value.Type == "fizz":
+			result[1]++
+		case value.Type == "buzz":
+			result[2]++
+		case value.Type == "number":
+			result[3]++
 		}
 	}
+	return result, nil
 }
 
-func PrintFizzBuzzNumb(f *FizzBuzz) { //функция печати
-	if len(f.ResultSlice) != 0 {
-		numbOfNumb, numbOfFizz, numbOfBuzz, numbOfFizzBuzz := 0, 0, 0, 0
-		for _, value := range f.ResultSlice {
-			switch {
-			case value.Type == "fizzbuzz":
-				numbOfFizzBuzz++
-			case value.Type == "fizz":
-				numbOfFizz++
-			case value.Type == "buzz":
-				numbOfBuzz++
-			case value.Type == "number":
-				numbOfNumb++
-			}
-		}
-		fmt.Printf("Количество fizzbuzz: %v, Количество fizz: %v, Количество buzz: %v, Количество чисел: %v, ", numbOfFizzBuzz, numbOfFizz, numbOfBuzz, numbOfNumb)
+// GetPrintNames
+func GetPrintNames(f FizzBuzz) ([][3]string, error) {
+	lenSlice := len(f.FizzBuzzResultSlice)
+	var valueEachElement [3]string
+	valueFizzBuz := make([][3]string, 0, lenSlice)
+	if lenSlice == 0 {
+		return valueFizzBuz, fmt.Errorf("данные отсутствуют")
 	}
+	for _, value := range f.FizzBuzzResultSlice {
+		valueEachElement[0] = strconv.Itoa(value.Number)
+		valueEachElement[1] = value.Output
+		valueEachElement[2] = value.Type
+		valueFizzBuz = append(valueFizzBuz, valueEachElement)
+	}
+	return valueFizzBuz, nil
+}
+
+// RunfizzBuzz - основная логика программы
+func RunFizzBuzz() error {
+	number, err := input.InputNumber()
+	if err != nil {
+		fmt.Println(err)
+		RunFizzBuzz()
+	}
+
+	//Создадим пустой срез заданной capacity
+	fizBuzzEmpty, err := NewFizzBuzz(number)
+	if err != nil {
+		fmt.Println(err)
+		RunFizzBuzz()
+	}
+	fizBuzzFinal, err := GenerateFizzBuzz(&fizBuzzEmpty, number) //создаем последовательность
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	var typeCounts [4]int //считаем типы
+	typeCounts, err = countFizzBuzz(fizBuzzFinal)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	var printValue [][3]string
+	printValue, err = GetPrintNames(fizBuzzFinal)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	err = output.PrintFizzBuzz(printValue)
+
+	err = output.PrintFizzBuzzNumb(typeCounts)
+
 }

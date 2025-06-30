@@ -3,28 +3,12 @@ package input
 import "fmt"
 
 //Функция ввода данных реализации fizzbuzz, возвращает число
-func InputNumber() int {
+func InputNumber() (int, error) {
 	var number int
 	fmt.Printf("Введите число для реализации программы FizzBuzz\n")
 	fmt.Scanf("%d\n", &number)
-	return number
-}
-
-//Функция ввода данных команды, возвращает имя команды, string
-func CommandName() (string, error) {
-	var command string
-	fmt.Printf("Введите команду:\nAdd - добавляет слово в словарь\nGet - узнать определение слова\nDelete - удалить слово\nList - просмотреть весь словарь\n")
-	_, err := fmt.Scanf("%s\n", &command)
-	if err != nil {
-		return "", fmt.Errorf("ошибка при чтении данных: %v", err)
+	if number <= 0 {
+		return 0, fmt.Errorf("число не может быть отрицательным или равным нулю")
 	}
-	for {
-		switch command {
-		case "Add", "Get", "Delete", "List":
-			return command, nil
-		default:
-			fmt.Println("Неверная команда")
-
-		}
-	}
+	return number, nil
 }

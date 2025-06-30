@@ -6,7 +6,7 @@ import (
 )
 
 func TestCalcFizzBuzz(t *testing.T) {
-	example := FizzBuzz{ResultSlice: []Result{
+	example := FizzBuzz{FizzBuzzResultSlice: []Result{
 		{Number: 1, Output: "1", Type: "number"},
 		{Number: 2, Output: "2", Type: "number"},
 		{Number: 3, Output: "Fizz", Type: "fizz"},
@@ -14,7 +14,7 @@ func TestCalcFizzBuzz(t *testing.T) {
 		{Number: 5, Output: "Buzz", Type: "buzz"},
 	}}
 
-	testing := FizzBuzz{ResultSlice: make([]Result, 0, 5)}
+	testing := FizzBuzz{FizzBuzzResultSlice: make([]Result, 0, 5)}
 	CalcFizzBuzz(&testing, 5)
 	if !reflect.DeepEqual(example, testing) {
 		t.Errorf("допущена ошибка в создании цепочки")

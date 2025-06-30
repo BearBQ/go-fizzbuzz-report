@@ -8,7 +8,7 @@ import (
 
 func main() {
 	number := input.InputNumber()
-	newFizz := fizzbuzz.NewFizzBuzz(number)
+	newFizz, err := fizzbuzz.NewFizzBuzz(number)
 	resultFizzBuzz, err := fizzbuzz.CalcFizzBuzz(newFizz, number)
 	if err != nil {
 		fmt.Println("Ошибка создания FizzBuzz:", err)
