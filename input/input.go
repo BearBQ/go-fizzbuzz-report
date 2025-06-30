@@ -1,30 +1,27 @@
 package input
 
-import "fmt"
+import (
+	"bufio"
+	"fmt"
+	"os"
+	"strconv"
+	"strings"
+)
 
-//Функция ввода данных реализации fizzbuzz, возвращает число
-func InputNumber() int {
+// Функция ввода данных реализации fizzbuzz, возвращает число
+func InputNumber() (int, error) {
 	var number int
 	fmt.Printf("Введите число для реализации программы FizzBuzz\n")
-	fmt.Scanf("%d\n", &number)
-	return number
-}
-
-//Функция ввода данных команды, возвращает имя команды, string
-func CommandName() (string, error) {
-	var command string
-	fmt.Printf("Введите команду:\nAdd - добавляет слово в словарь\nGet - узнать определение слова\nDelete - удалить слово\nList - просмотреть весь словарь\n")
-	_, err := fmt.Scanf("%s\n", &command)
+	reader := bufio.NewReader(os.Stdin)
+	input, _ := reader.ReadString('\n')
+	input = strings.TrimSpace(input)
+	number, err := strconv.Atoi(input)
 	if err != nil {
-		return "", fmt.Errorf("ошибка при чтении данных: %v", err)
+		return 0, fmt.Errorf("введено не целое число")
 	}
-	for {
-		switch command {
-		case "Add", "Get", "Delete", "List":
-			return command, nil
-		default:
-			fmt.Println("Неверная команда")
+	if number <= 0 {
+		return 0, fmt.Errorf("число не может быть отрицательным или равным нулю")
+	}
 
-		}
-	}
+	return number, nil
 }
